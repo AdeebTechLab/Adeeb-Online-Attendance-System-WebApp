@@ -28,6 +28,19 @@ The supplied `Adeeb Online Attendance System logo.png` is retained at the projec
 
 Requirements: Node.js 20+ and a MongoDB database.
 
+
+```
+cd backend
+npm install
+npm run dev
+
+cd frontend
+npm install
+npm run dev
+```
+
+
+
 1. Install dependencies from the repository root:
 
    ```bash
