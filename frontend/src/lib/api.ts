@@ -1,4 +1,6 @@
-const API_BASE = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
+// Keep browser requests first-party in every environment. Vite proxies this path
+// locally and Vercel rewrites it to Render in production, so auth cookies work.
+const API_BASE = "/api";
 
 export class ApiError extends Error { constructor(message: string, public status: number, public details?: unknown) { super(message); } }
 
