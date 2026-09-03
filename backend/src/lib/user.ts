@@ -8,6 +8,7 @@ export function publicUser(user: any) {
     institutionName: user.institutionName || "",
     designation: user.designation || user.department || "",
     role: user.role,
+    isActive: user.isActive !== false,
     createdAt: user.createdAt,
   };
 }

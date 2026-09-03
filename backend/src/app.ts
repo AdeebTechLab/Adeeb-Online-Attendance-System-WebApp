@@ -57,9 +57,7 @@ const corsOptions: CorsOptions = {
 
     console.warn("Blocked CORS origin:", origin);
 
-    callback(
-      new Error(`Origin ${origin} is not allowed by CORS`)
-    );
+    callback(new AppError(403, "Request origin is not allowed."));
   },
 
   credentials: true,
@@ -166,8 +164,7 @@ app.get(
     res.status(200).json({
       name: "Adeeb Online Attendance System API",
       status: "running",
-      frontend:
-        "https://adeeb-online-attendance-system.vercel.app",
+      frontend: config.CLIENT_URL,
       backend:
         "https://adeeb-online-attendance-system.onrender.com",
     });

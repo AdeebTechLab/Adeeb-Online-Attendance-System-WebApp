@@ -17,6 +17,7 @@ const userSchema = new Schema({
   // Legacy compatibility only. New writes and API responses use `designation`.
   department: { type: String, trim: true, maxlength: 100 },
   role: { type: String, enum: ["TEACHER", "ADMIN"], default: "TEACHER", required: true },
+  isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
 export const User = model("User", userSchema);

@@ -3,16 +3,17 @@ import request from "supertest";
 import { app } from "./app.js";
 
 describe("HTTP application boundary", () => {
-  it("redirects the API root to the frontend application", async () => {
+  it("describes the running API at its root", async () => {
     const response = await request(app).get("/");
-    expect(response.status).toBe(302);
-    expect(response.headers.location).toBe("http://localhost:5173");
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({ name: "Adeeb Online Attendance System API", status: "running" });
   });
 
   it("exposes a deployment health check without database access", async () => {
     const response = await request(app).get("/api/health");
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ status: "ok" });
+    expect(response.body).toMatchObject({ status: "ok", service: "Adeeb Attendance API" });
+    expect(Date.parse(response.body.timestamp)).not.toBeNaN();
     expect(response.headers["x-content-type-options"]).toBe("nosniff");
   });
 

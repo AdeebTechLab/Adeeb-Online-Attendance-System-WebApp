@@ -10,7 +10,13 @@ describe("public user designation mapping", () => {
     expect(result.designation).toBe("Teacher");
     expect(result.city).toBe("Bahawalpur");
     expect(result.institutionName).toBe("Adeeb Public School");
+    expect(result.isActive).toBe(true);
     expect(result).not.toHaveProperty("department");
+  });
+
+  it("exposes stopped accounts while treating legacy records as active", () => {
+    expect(publicUser({ ...base, isActive: false }).isActive).toBe(false);
+    expect(publicUser(base).isActive).toBe(true);
   });
 
   it("uses legacy stored department data when designation is absent", () => {
