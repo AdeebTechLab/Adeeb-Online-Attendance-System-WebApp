@@ -25,3 +25,14 @@ export async function downloadPdf(path: string, filename: string) {
   const url = URL.createObjectURL(await response.blob());
   const link = document.createElement("a"); link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
 }
+
+export async function downloadFile(path: string, filename: string) {
+  const response = await fetch(`${API_BASE}${path}`, { credentials: "include" });
+  if (!response.ok) { const data = await response.json().catch(() => ({})); throw new ApiError(data.message || "Could not download file.", response.status); }
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement("a"); link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+}
+
+export async function uploadCsv(path: string, csv: string) {
+  return api<{ imported: number }>(path, { method: "POST", body: JSON.stringify({ csv }) });
+}
