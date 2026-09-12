@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
 import type { ClassItem } from "../types";
 
-const blank = { name: "", subject: "", section: "", room: "", academicYear: "", shift: "MORNING" as const };
+const blank = { name: "", shift: "MORNING" as const };
 export default function DashboardPage() {
   const { user } = useAuth(); const [classes, setClasses] = useState<ClassItem[]>([]); const [loading, setLoading] = useState(true); const [query, setQuery] = useState(""); const [modal, setModal] = useState<ClassItem | "new" | null>(null); const [error, setError] = useState("");
   const load = () => api<{ classes: ClassItem[] }>("/classes").then((x) => setClasses(x.classes)).finally(() => setLoading(false));
@@ -30,5 +30,5 @@ export default function DashboardPage() {
 }
 
 function ClassForm({ initial, onSubmit, error, onCancel }: { initial: typeof blank | ClassItem; onSubmit: (e: FormEvent<HTMLFormElement>) => void; error: string; onCancel: () => void }) {
-  return <form className="modal-form" onSubmit={onSubmit}><label>Class name<input name="name" defaultValue={initial.name} required placeholder="e.g. Information Technology (IT)" /></label><label>Subject<input name="subject" defaultValue={initial.subject || ""} placeholder="e.g. Mathematics" /></label><div className="form-row"><label>Section<input name="section" defaultValue={initial.section || ""} placeholder="e.g. A" /></label><label>Room<input name="room" defaultValue={initial.room || ""} placeholder="e.g. 204" /></label></div><div className="form-row"><label>Academic year<input name="academicYear" defaultValue={initial.academicYear || ""} placeholder="e.g. 2026–27" /></label><label>Class Shift<select name="shift" defaultValue={initial.shift || "MORNING"} required><option value="MORNING">Morning</option><option value="EVENING">Evening</option></select></label></div>{error && <div className="form-error">{error}</div>}<div className="modal-actions"><button type="button" className="btn secondary" onClick={onCancel}>Cancel</button><button className="btn primary">Save class</button></div></form>;
+  return <form className="modal-form" onSubmit={onSubmit}><label>Class name<input name="name" defaultValue={initial.name} required placeholder="e.g. Class 10" /></label><label>Class Shift<select name="shift" defaultValue={initial.shift || "MORNING"} required><option value="MORNING">Morning</option><option value="EVENING">Evening</option></select></label>{error && <div className="form-error">{error}</div>}<div className="modal-actions"><button type="button" className="btn secondary" onClick={onCancel}>Cancel</button><button className="btn primary">Create class</button></div></form>;
 }

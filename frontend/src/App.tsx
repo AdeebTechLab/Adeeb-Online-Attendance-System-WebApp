@@ -4,6 +4,7 @@ import AppShell from "./components/AppShell";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import ClassPage from "./pages/ClassPage";
+import SubjectPage from "./pages/SubjectPage";
 import AttendancePage from "./pages/AttendancePage";
 import AdminPage from "./pages/AdminPage";
 
@@ -21,6 +22,7 @@ export default function App() {
     <Route element={<Protected />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/classes/:classId" element={<ClassPage />} />
+      <Route path="/classes/:classId/subjects/:subjectId" element={<SubjectPage />} />
       <Route path="/attendance" element={<AttendancePage />} />
       <Route path="/admin" element={<AdminPage />} />
     </Route>

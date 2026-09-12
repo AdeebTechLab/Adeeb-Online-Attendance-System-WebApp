@@ -8,6 +8,7 @@ import { config } from "./config.js";
 
 import authRoutes from "./routes/auth.js";
 import classRoutes from "./routes/classes.js";
+import subjectRoutes from "./routes/subjects.js";
 import studentRoutes from "./routes/students.js";
 import attendanceRoutes from "./routes/attendance.js";
 import adminRoutes from "./routes/admin.js";
@@ -203,6 +204,12 @@ app.use(
   "/api/classes",
   authenticate,
   classRoutes
+);
+
+app.use(
+  "/api/classes/:classId/subjects",
+  authenticate,
+  subjectRoutes
 );
 
 app.use(

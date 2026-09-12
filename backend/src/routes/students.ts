@@ -49,6 +49,7 @@ const router = Router({ mergeParams: true });
 const fields = z.object({
   name: z.string().trim().min(1).max(100), rollNumber: z.string().trim().min(1).max(50), email: z.string().trim().email().max(200).optional().or(z.literal("")),
   phone: optionalText(30), guardianName: optionalText(100), guardianPhone: optionalText(30),
+  subjectId: z.string().regex(/^[a-f\d]{24}$/i).optional().or(z.literal("")),
 });
 const baseParams = { classId: objectId };
 
@@ -113,7 +114,9 @@ router.post("/import", validate(z.object({ params: z.object(baseParams) })), asy
 
 router.post("/", validate(z.object({ params: z.object(baseParams), body: fields })), async (req: Request, res: Response) => {
   await ownClass(String(req.params.classId), req.auth!.userId);
-  const student = await Student.create({ ...req.body, classId: req.params.classId });
+  const body = { ...req.body, classId: req.params.classId };
+  if (!body.subjectId) delete body.subjectId;
+  const student = await Student.create(body);
   res.status(201).json({ student });
 });
 

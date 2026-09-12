@@ -8,6 +8,7 @@ const studentSchema = new Schema({
   guardianName: { type: String, trim: true, maxlength: 100 },
   guardianPhone: { type: String, trim: true, maxlength: 30 },
   classId: { type: Schema.Types.ObjectId, ref: "Class", required: true, index: true },
+  subjectId: { type: Schema.Types.ObjectId, ref: "Subject", default: null, index: true },
 }, { timestamps: true });
 
 studentSchema.index({ classId: 1, rollNumber: 1 }, { unique: true });
