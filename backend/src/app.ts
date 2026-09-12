@@ -11,6 +11,7 @@ import classRoutes from "./routes/classes.js";
 import subjectRoutes from "./routes/subjects.js";
 import studentRoutes from "./routes/students.js";
 import attendanceRoutes from "./routes/attendance.js";
+import crRoutes from "./routes/cr.js";
 import adminRoutes from "./routes/admin.js";
 
 import { authenticate, requireAdmin } from "./middleware/auth.js";
@@ -222,6 +223,12 @@ app.use(
   "/api/classes/:classId/attendance",
   authenticate,
   attendanceRoutes
+);
+
+app.use(
+  "/api/cr",
+  authenticate,
+  crRoutes
 );
 
 /* =========================================================

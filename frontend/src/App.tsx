@@ -6,6 +6,8 @@ import DashboardPage from "./pages/DashboardPage";
 import ClassPage from "./pages/ClassPage";
 import SubjectPage from "./pages/SubjectPage";
 import AttendancePage from "./pages/AttendancePage";
+import CRPage from "./pages/CRPage";
+import CRManagePage from "./pages/CRManagePage";
 import AdminPage from "./pages/AdminPage";
 
 function Protected() {
@@ -18,14 +20,16 @@ export default function App() {
   const { user, loading } = useAuth();
   if (loading) return <div className="app-loader"><img src="/logo.png" alt="" /><span>Preparing your workspace…</span></div>;
   return <Routes>
-    <Route path="/auth" element={user ? <Navigate to={user.role === "ADMIN" ? "/admin" : "/dashboard"} replace /> : <AuthPage />} />
+    <Route path="/auth" element={user ? <Navigate to={user.role === "ADMIN" ? "/admin" : user.role === "CR" ? "/cr" : "/dashboard"} replace /> : <AuthPage />} />
     <Route element={<Protected />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/classes/:classId" element={<ClassPage />} />
       <Route path="/classes/:classId/subjects/:subjectId" element={<SubjectPage />} />
       <Route path="/attendance" element={<AttendancePage />} />
+      <Route path="/cr" element={<CRPage />} />
+      <Route path="/cr-manage" element={<CRManagePage />} />
       <Route path="/admin" element={<AdminPage />} />
     </Route>
-    <Route path="*" element={<Navigate to={user?.role === "ADMIN" ? "/admin" : user ? "/dashboard" : "/auth"} replace />} />
+    <Route path="*" element={<Navigate to={user?.role === "ADMIN" ? "/admin" : user?.role === "CR" ? "/cr" : user ? "/dashboard" : "/auth"} replace />} />
   </Routes>;
 }

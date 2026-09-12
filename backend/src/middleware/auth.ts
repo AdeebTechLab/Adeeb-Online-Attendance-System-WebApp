@@ -19,6 +19,7 @@ export const authenticate: RequestHandler = async (req: Request, _res: Response,
   const user = await User.findById(claims.sub).select("role isActive").lean();
   if (!user) return next(new AppError(401, "Account no longer exists."));
   if (user.role === "TEACHER" && user.isActive === false) return next(new AppError(403, "This account has been stopped by an administrator."));
+  if (user.role === "CR" && user.isActive === false) return next(new AppError(403, "This account has been stopped."));
   req.auth = { userId: claims.sub, role: user.role as UserRole };
   next();
 };

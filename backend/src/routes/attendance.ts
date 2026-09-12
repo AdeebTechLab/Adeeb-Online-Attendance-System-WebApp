@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import PDFDocument from "pdfkit";
 import { z } from "zod";
 import { ClassModel } from "../models/Class.js";
+import { Subject } from "../models/Subject.js";
 import { Student } from "../models/Student.js";
 import { Attendance } from "../models/Attendance.js";
 import { AppError, dateOnly, objectId, validate } from "../lib/http.js";
@@ -13,7 +14,14 @@ const reportParams = z.object({ classId: objectId });
 const reportQuery = z.object({ startDate: dateOnly, endDate: dateOnly }).refine((value) => value.startDate <= value.endDate, { message: "Start date must be before or equal to end date.", path: ["endDate"] });
 const monthlyReportQuery = z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Use YYYY-MM format") });
 
-async function getOwnedClass(classId: string, userId: string) {
+async function getOwnedClass(classId: string, userId: string, role?: string) {
+  if (role === "CR") {
+    const hasAccess = await Subject.exists({ classId, crIds: userId });
+    if (!hasAccess) throw new AppError(404, "Class not found.");
+    const item = await ClassModel.findById(classId);
+    if (!item) throw new AppError(404, "Class not found.");
+    return item;
+  }
   const item = await ClassModel.findOne({ _id: classId, teacherId: userId });
   if (!item) throw new AppError(404, "Class not found.");
   return item;
@@ -186,7 +194,7 @@ router.get("/report/pdf", validate(z.object({ params: reportParams, query: repor
 });
 
 router.get("/:date", validate(z.object({ params })), async (req: Request, res: Response) => {
-  const classItem = await getOwnedClass(String(req.params.classId), req.auth!.userId);
+  const classItem = await getOwnedClass(String(req.params.classId), req.auth!.userId, req.auth!.role);
   const [students, records] = await Promise.all([
     Student.find({ classId: classItem._id }).collation({ locale: "en", numericOrdering: true, strength: 2 }).sort({ rollNumber: 1, name: 1 }),
     Attendance.find({ classId: classItem._id, date: req.params.date }),
@@ -196,7 +204,7 @@ router.get("/:date", validate(z.object({ params })), async (req: Request, res: R
 });
 
 router.put("/:date", validate(z.object({ params, body: z.object({ records: z.array(z.object({ studentId: objectId, status: z.enum(["PRESENT", "ABSENT", "LEAVE"]) })).max(1000) }) })), async (req: Request, res: Response) => {
-  const classItem = await getOwnedClass(String(req.params.classId), req.auth!.userId);
+  const classItem = await getOwnedClass(String(req.params.classId), req.auth!.userId, req.auth!.role);
   const uniqueIds = new Set(req.body.records.map((x: { studentId: string }) => x.studentId));
   if (uniqueIds.size !== req.body.records.length) throw new AppError(400, "Each student may appear only once.");
   const validCount = await Student.countDocuments({ _id: { $in: [...uniqueIds] }, classId: classItem._id });

@@ -13,7 +13,7 @@ export default function AuthPage() {
     e.preventDefault(); setLoading(true); setError("");
     const form = new FormData(e.currentTarget); const body = Object.fromEntries(form.entries());
     if (typeof body.password !== "string" || body.password.trim().length === 0) { setError("Password cannot be blank."); setLoading(false); return; }
-    try { const result = await api<{ user: User }>(`/auth/${mode}`, { method: "POST", body: JSON.stringify(body) }); setUser(result.user); navigate(result.user.role === "ADMIN" ? "/admin" : "/dashboard"); }
+    try { const result = await api<{ user: User }>(`/auth/${mode}`, { method: "POST", body: JSON.stringify(body) }); setUser(result.user); navigate(result.user.role === "ADMIN" ? "/admin" : result.user.role === "CR" ? "/cr" : "/dashboard"); }
     catch (e) { setError(e instanceof ApiError ? e.message : "Could not complete your request."); } finally { setLoading(false); }
   }
   return <div className="auth-page">

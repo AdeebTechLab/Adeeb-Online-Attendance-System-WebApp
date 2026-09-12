@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 import { z } from "zod";
+import { Types } from "mongoose";
 import { ClassModel } from "../models/Class.js";
 import { Subject } from "../models/Subject.js";
 import { Student } from "../models/Student.js";
@@ -11,15 +12,24 @@ const router = Router({ mergeParams: true });
 const fields = z.object({ name: z.string().trim().min(1).max(100), section: optionalText(50), room: optionalText(50), periodNo: optionalText(20), academicYear: optionalText(30) });
 const baseParams = { classId: objectId };
 
-async function ownClass(classId: string, userId: string) {
+async function ownClass(classId: string, userId: string, role?: string) {
+  if (role === "CR") {
+    const hasAccess = await Subject.exists({ classId, crIds: userId });
+    if (!hasAccess) throw new AppError(404, "Class not found.");
+    return;
+  }
   const item = await ClassModel.exists({ _id: classId, teacherId: userId });
   if (!item) throw new AppError(404, "Class not found.");
 }
 
 router.get("/", validate(z.object({ params: z.object(baseParams) })), async (req: Request, res: Response) => {
-  await ownClass(String(req.params.classId), req.auth!.userId);
+  await ownClass(String(req.params.classId), req.auth!.userId, req.auth!.role);
+  const match: Record<string, unknown> = { classId: new Types.ObjectId(String(req.params.classId)) };
+  if (req.auth!.role === "CR") {
+    match.crIds = new Types.ObjectId(req.auth!.userId);
+  }
   const subjects = await Subject.aggregate([
-    { $match: { classId: new (await import("mongoose")).Types.ObjectId(String(req.params.classId)) } },
+    { $match: match },
     { $lookup: { from: "students", localField: "_id", foreignField: "subjectId", as: "students" } },
     { $addFields: { studentCount: { $size: "$students" } } },
     { $project: { students: 0 } },

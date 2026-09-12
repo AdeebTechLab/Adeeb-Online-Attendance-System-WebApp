@@ -27,7 +27,8 @@ router.post("/login", authLimiter, validate(z.object({ body: z.object({ email: z
   const user = await User.findOne({ email: req.body.email }).select("+passwordHash");
   if (!user || !(await bcrypt.compare(req.body.password, user.passwordHash))) throw new AppError(401, "Email or password is incorrect.");
   if (user.role === "TEACHER" && user.isActive === false) throw new AppError(403, "This account has been stopped by an administrator.");
-  res.cookie("access_token", signAccessToken(String(user._id), user.role as "TEACHER" | "ADMIN"), cookieOptions).json({ user: publicUser(user) });
+  if (user.role === "CR" && user.isActive === false) throw new AppError(403, "This account has been stopped.");
+  res.cookie("access_token", signAccessToken(String(user._id), user.role as "TEACHER" | "ADMIN" | "CR"), cookieOptions).json({ user: publicUser(user) });
 });
 
 router.post("/logout", (_req: Request, res: Response) => res.clearCookie("access_token", { ...cookieOptions, maxAge: undefined }).status(204).end());

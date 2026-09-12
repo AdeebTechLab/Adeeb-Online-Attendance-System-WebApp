@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-export type UserRole = "TEACHER" | "ADMIN";
+export type UserRole = "TEACHER" | "ADMIN" | "CR";
 
 const userSchema = new Schema({
   name: { type: String, required: true, trim: true, maxlength: 100 },
@@ -16,7 +16,7 @@ const userSchema = new Schema({
   designation: { type: String, trim: true, maxlength: 100 },
   // Legacy compatibility only. New writes and API responses use `designation`.
   department: { type: String, trim: true, maxlength: 100 },
-  role: { type: String, enum: ["TEACHER", "ADMIN"], default: "TEACHER", required: true },
+  role: { type: String, enum: ["TEACHER", "ADMIN", "CR"], default: "TEACHER", required: true },
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 

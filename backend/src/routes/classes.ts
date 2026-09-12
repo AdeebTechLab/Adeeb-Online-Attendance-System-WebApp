@@ -7,7 +7,7 @@ import { Attendance } from "../models/Attendance.js";
 import { AppError, objectId, optionalText, validate } from "../lib/http.js";
 
 const router = Router();
-const fields = z.object({ name: z.string().trim().min(1).max(100), subject: optionalText(100), section: optionalText(50), room: optionalText(50), academicYear: optionalText(30), shift: z.enum(["MORNING", "EVENING"]).optional() });
+const fields = z.object({ name: z.string().trim().min(1).max(100), subject: optionalText(100), section: optionalText(50), room: optionalText(50), academicYear: optionalText(30), shift: z.enum(["MORNING", "EVENING"]).optional(), crIds: z.array(objectId).optional() });
 const idParams = z.object({ params: z.object({ classId: objectId }) });
 
 router.get("/", async (req: Request, res: Response) => {

@@ -8,6 +8,7 @@ const subjectSchema = new Schema({
   academicYear: { type: String, trim: true, maxlength: 30 },
   classId: { type: Schema.Types.ObjectId, ref: "Class", required: true, index: true },
   teacherId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+  crIds: [{ type: Schema.Types.ObjectId, ref: "User" }],
 }, { timestamps: true });
 
 subjectSchema.index({ classId: 1, name: 1 }, { unique: true });
