@@ -4,7 +4,7 @@ import { api, ApiError } from "../lib/api";
 import type { AttendanceStatus, Student, Subject } from "../types";
 
 const today = new Date().toLocaleDateString("en-CA");
-type SubjectWithClass = Subject & { classId: { _id: string; name: string } | string };
+type SubjectWithClass = Omit<Subject, "classId"> & { classId: { _id: string; name: string } | string };
 type Option = { classId: string; subjectId: string; label: string };
 type Mark = { status?: AttendanceStatus };
 

@@ -7,7 +7,7 @@ import { api, ApiError } from "../lib/api";
 import type { Subject } from "../types";
 
 type CR = { _id: string; name: string; email: string; phone: string; city?: string; isActive: boolean; createdAt: string };
-type SubjectWithClass = Subject & { classId: { _id: string; name: string } | string };
+type SubjectWithClass = Omit<Subject, "classId"> & { classId: { _id: string; name: string } | string };
 
 const blank = { name: "", email: "", password: "", phone: "", city: "" };
 export default function CRManagePage() {
