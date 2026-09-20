@@ -27,6 +27,7 @@ export default function AttendancePage() {
     if (reportType === "range" && reportStart > reportEnd) { setReportError("End date must be on or after the start date."); return; }
     setReporting(true); setReportError("");
     try {
+
       if (reportType === "single") {
         const data = await api<{ students: Student[] }>(`/classes/${classId}/attendance/${reportDate}`);
         const wb = XLSX.utils.book_new();
