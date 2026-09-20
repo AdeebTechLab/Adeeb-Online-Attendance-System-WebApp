@@ -31,7 +31,10 @@ export default function AttendancePage() {
         const data = await api<{ students: Student[] }>(`/classes/${classId}/attendance/${reportDate}`);
         const wb = XLSX.utils.book_new();
         const rows: (string | number)[][] = [["Roll Number", "Name", "Status"]];
-        for (const s of data.students) rows.push([s.rollNumber, s.name, s.attendance?.status || "UNMARKED"]);
+        for (const s of data.students) {
+          const st = s.attendance?.status;
+          rows.push([s.rollNumber, s.name, st === "PRESENT" ? "P" : st === "ABSENT" ? "A" : st === "LEAVE" ? "L" : "UNMARKED"]);
+        }
         const ws = XLSX.utils.aoa_to_sheet(rows);
         ws["!cols"] = [{ wch: 15 }, { wch: 25 }, { wch: 12 }];
         XLSX.utils.book_append_sheet(wb, ws, "Attendance");
